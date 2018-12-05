@@ -51,4 +51,58 @@ STA模式参数设置
 表中返回的项目：
 	+ `SSID`：接入点的SSID。（格式：字符串）
 	+ `BSSID`：接入点的BSSID。（格式：字符串）
-	+ `channel`：接入点所在的通道。（格式：数字）
+	+ `channel`：接入点所在的通道。（格式：数字）	
+
+## wifi.eventmon.register（）
+注册/取消注册WiFi事件监视器的回调。 - 注册回调后，可以随时调用此函数来更新回调函数
+注意:为确保捕获所有WiFi事件，应尽早注册Wifi事件监视器回调init.lua。注册回调之前发生的任何事件都将被丢弃！
+句法
+`wifi.eventmon.register（Event [，function（T）]）`
+参数
+事件：您想要设置回调的WiFi事件。
+有效的WiFi活动：
+* `wifi.eventmon.STA_CONNECTED`
+* `wifi.eventmon.STA_DISCONNECTED`
+* `wifi.eventmon.STA_AUTHMODE_CHANGE`
+* `wifi.eventmon.STA_GOT_IP`
+* `wifi.eventmon.STA_DHCP_TIMEOUT`
+* `wifi.eventmon.AP_STACONNECTED`
+* `wifi.eventmon.AP_STADISCONNECTED`
+* `wifi.eventmon.AP_PROBEREQRECVED`
+
+返回功能：
+nil
+回调：
+T：事件返回的表。
++ `wifi.eventmon.STA_CONNECTED` 站连接到接入点。
+	+ `SSID`：接入点的SSID。
+	+ `BSSID`：接入点的BSSID。
+	+ `channel`：接入点所在的通道。
++ wifi.eventmon.STA_DISCONNECTED：站与接入点断开连接。
+	+ `SSID`：接入点的SSID。
+	+ `BSSID`：接入点的BSSID。
+	+ `reason`：请参阅下面的wifi.eventmon.reason。
++` wifi.eventmon.STA_AUTHMODE_CHANGE`：访问点已更改授权模式。
+	+ `old_auth_mode`：旧的wifi授权模式。
+	+ `new_auth_mode`：新的wifi授权模式。
++ `wifi.eventmon.STA_GOT_IP：Station`有一个IP地址。
+	+`IP`：分配给工作站的IP地址。
+	+ `netmask`： 子网掩码。
+	+ `gateway`：工作站连接的接入点的IP地址。
++ `wifi.eventmon.STA_DHCP_TIMEOUT`：Station DHCP请求已超时。
+	+ 返回空白表。
++ `wifi.eventmon.AP_STACONNECTED`：新客户端已连接到访问点。
+	+ `MAC`：已连接的客户端的MAC地址。
+	+ `AID`：SDK不提供有关此返回值的详细信息。
++ wifi.eventmon.AP_STADISCONNECTED：客户端已从访问点断开连接。
+	+ MAC：已断开连接的客户端的MAC地址。
+	+ AID：SDK不提供有关此返回值的详细信息。
++ `wifi.eventmon.AP_PROBEREQRECVE`D：收到了探测请求。
+	+ `MAC`：正在探测接入点的客户端的MAC地址。
+	+ `RSSI`：收到客户的信号强度指标。
++ `wifi.eventmon.WIFI_MODE_CHANGE`：WiFi模式已更改。
+	+ `old_auth_mod`e：旧的WiFi模式。
+	+ `new_auth_mode`：新的WiFi模式。
+	
+	
+	
