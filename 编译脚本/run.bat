@@ -1,0 +1,1 @@
+docker run --rm -ti -v %cd%:/opt/nodemcu-firmware marcelstoer/nodemcu-build build
