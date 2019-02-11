@@ -7,6 +7,12 @@ station_cfg.pwd="1234567890"	--密码
 wifi.sta.config(station_cfg)
 wifi.sta.connect()
 wifi.sta.autoconnect(1)
+--阿里云信息配置
+aliyun.DeviceNameFnc,aliyun.ProductKey,aliyun.DeviceSecretFnc = "869300031657095","a1vYCEPm6L6","XAplqKacU6SAKAbG8VQxvpoJ27BSIHpa"
+--订阅
+subscribe1="/sys/a1vYCEPm6L6/869300031657095/thing/service/property/set"
+--发布
+publish1="/sys/a1vYCEPm6L6/869300031657095/thing/event/property/post"
 --连接wifi
 function connect()
 	cnt=0
@@ -31,19 +37,28 @@ end
 --连接mqtt服务器
 
 function mqtt_do()
-	m:connect("a1vYCEPm6L6.iot-as-mqtt.cn-shanghai.aliyuncs.com", 1883, 0,0, 
+	m:connect(aliyun.ProductKey..".iot-as-mqtt.cn-shanghai.aliyuncs.com", 1883, 0,0, 
 				function(client) 
-					print("----DiFi MQTT Server Connected") 
+					print("----Aliyun MQTT Server Connected") 
 					tmr.stop(0)
-					m:subscribe("/sys/a1vYCEPm6L6/869300031657095/thing/service/property/set",0, function(conn) print("subscribe success") end)
-					m:on("message", function(client, topic, data) print(data) end)
+					m:subscribe(subscribe1,0, function(conn) print("subscribe success") end)
+					m:on("message", function(client, topic, data) 
+					--print(data) 
+					uart.write(0,data)
+					end)
 				end, 
 				function(client, reason) 
 				print("Failed reason: "..reason) 
 				end)
 end
-post=0
+function sendPublish(pub_data)
+	m:publish(publish1,pub_data,1,0,function(client)
+print("sent "..pub_data.." to "..publish1)
+end)
+end
+uart.on("data","\r",function(data) sendPublish(data) end, 0)
 function init()
+	local post=0
 	tmr.alarm(0,2000,tmr.ALARM_AUTO,function()
 	if wifi.sta.getip() == nil then
 		print("on wifi")
@@ -73,7 +88,7 @@ function init()
 		m:on("offline", function(client) 
 				print ("----Aliyun MQTT Server Offline") 
 				collectgarbage("collect")
-				mqttdo()
+				mqtt_do()
 		end)
 		mqtt_do()
 	

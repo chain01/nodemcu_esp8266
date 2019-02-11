@@ -1,5 +1,5 @@
 module(..., package.seeall)
-DeviceNameFnc,ProductKey,DeviceSecretFnc = "869300031657095","a1vYCEPm6L6","XAplqKacU6SAKAbG8VQxvpoJ27BSIHpa"
+DeviceNameFnc,ProductKey,DeviceSecretFnc = "","",""
 function getBody()
         data = "clientId"..DeviceNameFnc.."deviceName"..DeviceNameFnc.."productKey"..ProductKey
         signKey= DeviceSecretFnc
@@ -9,22 +9,26 @@ end
 sucecc=0
 function httppost()
 if sucecc==0 then
-	bodydata=getBody()
-	--print("-----------------"..bodydata)
-	http.post('https://iot-auth.cn-shanghai.aliyuncs.com/auth/devicename',
-	  'Content-Type:application/x-www-form-urlencoded\r\n',
-	  bodydata,
-	  function(code, data)
-		if (code < 0) then
-		  print("HTTP request failed")
-		else
-		  --print(code, data)
-			datatest=data
-			print("ok")
-			sucecc=1
-	   end	
-	  end)
-	  return datatest
+	if DeviceNameFnc~="" and ProductKey~="" and DeviceSecretFnc~="" then
+		bodydata=getBody()
+		print("-----------------"..bodydata)
+		http.post('https://iot-auth.cn-shanghai.aliyuncs.com/auth/devicename',
+		  'Content-Type:application/x-www-form-urlencoded\r\n',
+		  bodydata,
+		  function(code, data)
+			if (code < 0) then
+			  print("HTTP request failed")
+			else
+			  --print(code, data)
+				datatest=data
+				print("ok")
+				sucecc=1
+		   end	
+		  end)
+		  return datatest
+	else
+	print("aliyun auth error")
+	end
 else
 	return datatest
 	end
